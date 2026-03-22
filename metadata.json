@@ -1,0 +1,7 @@
+{
+  "name": "Vanguard Estates",
+  "description": "Premium real estate development company specializing in luxury flats, villas, and commercial projects in India.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

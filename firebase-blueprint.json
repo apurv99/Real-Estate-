@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A real estate project listing.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "location": { "type": "string" },
+        "type": { "type": "string" },
+        "price": { "type": "string" },
+        "status": { "type": "string" },
+        "image": { "type": "string" },
+        "description": { "type": "string" },
+        "amenities": { "type": "array", "items": { "type": "string" } },
+        "features": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "location", "type", "price", "status", "image"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "A contact inquiry from a potential customer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "phone", "createdAt"]
+    },
+    "SiteVisit": {
+      "title": "SiteVisit",
+      "description": "A scheduled site visit request.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" },
+        "project": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "phone", "date", "time", "project", "createdAt"]
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "A newsletter subscriber.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/projects": {
+      "schema": "Project",
+      "description": "Publicly readable project listings."
+    },
+    "/leads": {
+      "schema": "Lead",
+      "description": "Private contact inquiries."
+    },
+    "/siteVisits": {
+      "schema": "SiteVisit",
+      "description": "Private site visit requests."
+    },
+    "/subscribers": {
+      "schema": "Subscriber",
+      "description": "Private newsletter subscriptions."
+    }
+  }
+}
