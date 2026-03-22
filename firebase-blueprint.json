@@ -8,15 +8,34 @@
         "id": { "type": "string" },
         "title": { "type": "string" },
         "location": { "type": "string" },
-        "type": { "type": "string" },
-        "price": { "type": "string" },
-        "status": { "type": "string" },
+        "type": { "type": "string", "enum": ["Flat", "Villa", "Commercial"] },
+        "priceRange": { "type": "string" },
+        "status": { "type": "string", "enum": ["Ongoing", "Completed", "Upcoming"] },
         "image": { "type": "string" },
+        "gallery": { "type": "array", "items": { "type": "string" } },
+        "video": { "type": "string" },
+        "floorPlans": { "type": "array", "items": { "type": "string" } },
+        "brochure": { "type": "string" },
         "description": { "type": "string" },
         "amenities": { "type": "array", "items": { "type": "string" } },
-        "features": { "type": "array", "items": { "type": "string" } }
+        "features": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["title", "location", "type", "price", "status", "image"]
+      "required": ["title", "location", "type", "priceRange", "status", "image", "description"]
+    },
+    "Unit": {
+      "title": "Unit",
+      "description": "An individual property unit under a project.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "projectId": { "type": "string" },
+        "unitNumber": { "type": "string" },
+        "size": { "type": "number" },
+        "price": { "type": "number" },
+        "availability": { "type": "string", "enum": ["Available", "Sold", "Booked"] }
+      },
+      "required": ["projectId", "unitNumber", "size", "price", "availability"]
     },
     "Lead": {
       "title": "Lead",
@@ -28,9 +47,10 @@
         "email": { "type": "string" },
         "phone": { "type": "string" },
         "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["New", "In Progress", "Closed"] },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["name", "email", "phone", "createdAt"]
+      "required": ["name", "email", "phone", "createdAt", "status"]
     },
     "SiteVisit": {
       "title": "SiteVisit",
@@ -44,9 +64,46 @@
         "date": { "type": "string", "format": "date" },
         "time": { "type": "string" },
         "project": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected", "Completed"] },
         "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["name", "email", "phone", "date", "time", "project", "createdAt"]
+      "required": ["name", "email", "phone", "date", "time", "project", "createdAt", "status"]
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "description": "A blog post article.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "author": { "type": "string" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "seoTitle": { "type": "string" },
+        "seoDescription": { "type": "string" }
+      },
+      "required": ["title", "excerpt", "content", "date", "author", "category", "image"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global website settings.",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "contactNumber": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "facebook": { "type": "string" },
+        "instagram": { "type": "string" },
+        "twitter": { "type": "string" },
+        "linkedin": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "logo": { "type": "string" },
+        "favicon": { "type": "string" }
+      }
     },
     "Subscriber": {
       "title": "Subscriber",
@@ -65,6 +122,10 @@
       "schema": "Project",
       "description": "Publicly readable project listings."
     },
+    "/units": {
+      "schema": "Unit",
+      "description": "Individual units under projects."
+    },
     "/leads": {
       "schema": "Lead",
       "description": "Private contact inquiries."
@@ -72,6 +133,14 @@
     "/siteVisits": {
       "schema": "SiteVisit",
       "description": "Private site visit requests."
+    },
+    "/blogPosts": {
+      "schema": "BlogPost",
+      "description": "Blog articles."
+    },
+    "/settings": {
+      "schema": "Settings",
+      "description": "Global website settings."
     },
     "/subscribers": {
       "schema": "Subscriber",

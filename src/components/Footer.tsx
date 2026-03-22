@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin, Send, ShieldCheck } from 'lucide-react';
 import { db, auth } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -124,6 +124,12 @@ export default function Footer() {
               <li><Link to="/about" className="hover:text-gold transition-colors">About Company</Link></li>
               <li><Link to="/contact" className="hover:text-gold transition-colors">Contact Us</Link></li>
               <li><Link to="/book-visit" className="hover:text-gold transition-colors">Book Site Visit</Link></li>
+              <li className="pt-4 border-t border-white/5">
+                <Link to="/admin" className="text-gold/60 hover:text-gold transition-colors flex items-center group">
+                  <ShieldCheck size={14} className="mr-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] uppercase tracking-widest font-bold">Admin Panel</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -185,6 +191,10 @@ export default function Footer() {
           <div className="flex space-x-8 mt-4 md:mt-0">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/admin" className="hover:text-gold transition-colors flex items-center">
+              <ShieldCheck size={10} className="mr-1" />
+              Admin
+            </Link>
           </div>
         </div>
       </div>

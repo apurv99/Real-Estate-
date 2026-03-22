@@ -9,13 +9,26 @@ service cloud.firestore {
     // Fields:
     //   - title: string (required)
     //   - location: string (required)
-    //   - type: string (required)
-    //   - price: string (required)
-    //   - status: string (required)
+    //   - type: string (required, enum: Flat, Villa, Commercial)
+    //   - priceRange: string (required)
+    //   - status: string (required, enum: Ongoing, Completed, Upcoming)
     //   - image: string (required)
-    //   - description: string
+    //   - description: string (required)
     //   - amenities: list
     //   - features: list
+    //   - gallery: list
+    //   - video: string
+    //   - floorPlans: list
+    //   - brochure: string
+    //   - createdAt: timestamp
+    //
+    // Collection: units
+    // Fields:
+    //   - projectId: string (required)
+    //   - unitNumber: string (required)
+    //   - size: number (required)
+    //   - price: number (required)
+    //   - availability: string (required, enum: Available, Sold, Booked)
     //
     // Collection: leads
     // Fields:
@@ -23,6 +36,7 @@ service cloud.firestore {
     //   - email: string (required)
     //   - phone: string (required)
     //   - message: string
+    //   - status: string (required, enum: New, In Progress, Closed)
     //   - createdAt: timestamp (required)
     //
     // Collection: siteVisits
@@ -33,7 +47,34 @@ service cloud.firestore {
     //   - date: string (required)
     //   - time: string (required)
     //   - project: string (required)
+    //   - status: string (required, enum: Pending, Approved, Rejected, Completed)
     //   - createdAt: timestamp (required)
+    //
+    // Collection: blogPosts
+    // Fields:
+    //   - title: string (required)
+    //   - excerpt: string (required)
+    //   - content: string (required)
+    //   - date: string (required)
+    //   - author: string (required)
+    //   - category: string (required)
+    //   - image: string (required)
+    //   - seoTitle: string
+    //   - seoDescription: string
+    //
+    // Collection: settings
+    // Fields:
+    //   - companyName: string
+    //   - contactNumber: string
+    //   - email: string
+    //   - address: string
+    //   - facebook: string
+    //   - instagram: string
+    //   - twitter: string
+    //   - linkedin: string
+    //   - whatsapp: string
+    //   - logo: string
+    //   - favicon: string
     //
     // Collection: subscribers
     // Fields:
@@ -72,27 +113,52 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidProject(data) {
-      return hasRequiredFields(['title', 'location', 'type', 'price', 'status', 'image']) &&
+      return hasRequiredFields(['title', 'location', 'type', 'priceRange', 'status', 'image', 'description']) &&
              data.title is string && data.title.size() > 0 && data.title.size() < 100 &&
              data.location is string && data.location.size() > 0 && data.location.size() < 100 &&
-             data.type is string && data.price is string && data.status is string && data.image is string;
+             data.type in ['Flat', 'Villa', 'Commercial'] &&
+             data.status in ['Ongoing', 'Completed', 'Upcoming'] &&
+             data.image is string &&
+             data.description is string;
+    }
+
+    function isValidUnit(data) {
+      return hasRequiredFields(['projectId', 'unitNumber', 'size', 'price', 'availability']) &&
+             data.projectId is string &&
+             data.unitNumber is string &&
+             data.size is number &&
+             data.price is number &&
+             data.availability in ['Available', 'Sold', 'Booked'];
     }
 
     function isValidLead(data) {
-      return hasRequiredFields(['name', 'email', 'phone', 'createdAt']) &&
+      return hasRequiredFields(['name', 'email', 'phone', 'createdAt', 'status']) &&
              data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
              isValidEmail(data.email) &&
              data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15 &&
+             data.status in ['New', 'In Progress', 'Closed'] &&
              data.createdAt is timestamp;
     }
 
     function isValidSiteVisit(data) {
-      return hasRequiredFields(['name', 'email', 'phone', 'date', 'time', 'project', 'createdAt']) &&
+      return hasRequiredFields(['name', 'email', 'phone', 'date', 'time', 'project', 'createdAt', 'status']) &&
              data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
              isValidEmail(data.email) &&
              data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 15 &&
              data.date is string && data.time is string && data.project is string &&
+             data.status in ['Pending', 'Approved', 'Rejected', 'Completed'] &&
              data.createdAt is timestamp;
+    }
+
+    function isValidBlogPost(data) {
+      return hasRequiredFields(['title', 'excerpt', 'content', 'date', 'author', 'category', 'image']) &&
+             data.title is string && data.title.size() > 0 &&
+             data.excerpt is string &&
+             data.content is string &&
+             data.date is string &&
+             data.author is string &&
+             data.category is string &&
+             data.image is string;
     }
 
     function isValidSubscriber(data) {
@@ -110,16 +176,31 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin() && isValidProject(request.resource.data);
     }
 
+    match /units/{unitId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidUnit(request.resource.data);
+    }
+
     match /leads/{leadId} {
       allow read: if isAdmin();
       allow create: if isValidLead(request.resource.data);
-      allow update, delete: if isAdmin();
+      allow update, delete: if isAdmin() && isValidLead(request.resource.data);
     }
 
     match /siteVisits/{visitId} {
       allow read: if isAdmin();
       allow create: if isValidSiteVisit(request.resource.data);
-      allow update, delete: if isAdmin();
+      allow update, delete: if isAdmin() && isValidSiteVisit(request.resource.data);
+    }
+
+    match /blogPosts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin() && isValidBlogPost(request.resource.data);
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
     }
 
     match /subscribers/{subId} {
